@@ -13,6 +13,8 @@ from accelerate import Accelerator
 from torch.utils.data import DataLoader
 from accelerate.utils import gather_object
 
+from piece_wise_temp import TemperatureScaler
+from model_with_temp import ModelWithTemperature    
 
 def extract_math_answer(pred_str): #MMLU
     try:
@@ -388,19 +390,19 @@ if __name__ == "__main__":
 
     # load device, prompt
     device1 = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
-    device2 = torch.device("cuda:1" if torch.cuda.is_available() else "cpu")
+    device2 = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
 
 
     #load model, tokenizer, generation_config
     model_path1, model_path2= args.model_path1, args.model_path2
 
     model1 = AutoModelForCausalLM.from_pretrained(model_path1, device_map=device1,
-                                       attn_implementation="flash_attention_2",
+                                       attn_implementation="sdpa",
                                        torch_dtype=torch.float16).eval()
-
+    model1 = ModelWithTemperature(model1, TemperatureScaler(pieces=1, n_temp=1, init_val=1.0).to(device1))
 
     model2 = AutoModelForCausalLM.from_pretrained(model_path2, device_map=device2,
-                                       attn_implementation="flash_attention_2",
+                                       attn_implementation="sdpa",
                                        torch_dtype=torch.float16).eval()
 
     tokenizer1, tokenizer2 = AutoTokenizer.from_pretrained(model_path1), AutoTokenizer.from_pretrained(model_path2)
