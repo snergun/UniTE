@@ -392,16 +392,18 @@ if __name__ == "__main__":
 
 
     #load model, tokenizer, generation_config
-    model_path1, model_path2= args.model_path1, args.model_path2
-
+    # model_path1, model_path2= args.model_path1, args.model_path2
+    print("Debugging model loading...")
+    model_path1, model_path2 = args.model_path1, args.model_path1
     model1 = AutoModelForCausalLM.from_pretrained(model_path1, device_map=device1,
                                        attn_implementation="sdpa",
                                        torch_dtype=torch.float16).eval()
 
 
-    model2 = AutoModelForCausalLM.from_pretrained(model_path2, device_map=device2,
-                                       attn_implementation="sdpa",
-                                       torch_dtype=torch.float16).eval()
+    # model2 = AutoModelForCausalLM.from_pretrained(model_path2, device_map=device2,
+    #                                    attn_implementation="sdpa",
+    #                                    torch_dtype=torch.float16).eval()
+    model2 = model1
 
     tokenizer1, tokenizer2 = AutoTokenizer.from_pretrained(model_path1), AutoTokenizer.from_pretrained(model_path2)
     tokenizer1.pad_token = tokenizer1.eos_token

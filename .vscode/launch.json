@@ -20,6 +20,23 @@
                 "--prompts",
                 "datasets/MMLU/dev"
             ]
+        },
+        {
+            "name": "Python Debugger: MMLU Token Probs",
+            "type": "debugpy",
+            "request": "launch",
+            "python": "/opt/conda/envs/unite/bin/python",
+            "program": "cache_probs.py", 
+            "console": "integratedTerminal",
+            "justMyCode": true,
+            "args": [
+                "--model_path1", "Qwen/Qwen2-7B-Instruct",
+                "--output_file", "qwen2_mmlu_probs.jsonl",
+                "--test_set", "datasets/MMLU/test",
+                "--prompts", "datasets/MMLU/dev",
+                "--per_device_batch_size", "1",
+                "--max_new_tokens", "1"
+            ],
         }
     ]
 }
